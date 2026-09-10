@@ -97,7 +97,10 @@ class MqttService {
   }
 
   void publishJson(String topic, Map<String, dynamic> data) {
-    publish(topic, jsonEncode(data));
+    final payloadData = Map<String, dynamic>.from(data);
+    payloadData['sentAt'] = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+    publish(topic, jsonEncode(payloadData));
   }
 
   void disconnect() {
