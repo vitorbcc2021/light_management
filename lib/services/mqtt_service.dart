@@ -28,6 +28,7 @@ class MqttService {
     _setState(AppMqttState.connecting);
 
     _client = MqttServerClient.withPort(broker, clientId, port);
+    _client!.setProtocolV311();
     _client!.logging(on: false);
     _client!.keepAlivePeriod = 30;
     _client!.connectTimeoutPeriod = 30000;
@@ -38,7 +39,7 @@ class MqttService {
 
     final connMsg = MqttConnectMessage()
         .withClientIdentifier(clientId)
-        .withWillQos(MqttQos.atLeastOnce)
+        .keepAliveFor(30)
         .startClean();
 
     if (username != null && username.isNotEmpty) {

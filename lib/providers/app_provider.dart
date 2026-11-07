@@ -40,7 +40,12 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<bool> connect() async {
-    final clientId = 'LightManagementApp${_uuid.v4().substring(0, 8)}';
+    final clientId = 'tcc_${_uuid.v4().substring(0, 8)}';
+
+    print(
+      'Tentando conectar em: ${brokerConfig['broker']} na porta ${brokerConfig['port']}',
+    );
+
     final success = await _mqtt.connect(
       broker: brokerConfig['broker']!,
       port: int.tryParse(brokerConfig['port'] ?? '1883') ?? 1883,
@@ -48,11 +53,16 @@ class AppProvider extends ChangeNotifier {
       password: brokerConfig['password'],
       clientId: clientId,
     );
+
     if (success) {
+      print('Conectado com sucesso!');
       for (final d in devices) {
         _subscribeDevice(d);
       }
+    } else {
+      print('Falha na conexão: ${_mqtt.lastError}');
     }
+
     notifyListeners();
     return success;
   }
